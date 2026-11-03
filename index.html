@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factoring Practice: GCF & M * A Table</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .math-font { font-family: 'Cambria Math', 'Times New Roman', serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen py-8 px-4 font-sans">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header & Score -->
+    <header class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-lg gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-amber-400">Factoring Practice</h1>
+        <p class="text-xs text-slate-400">GCF Identification + STEP 2: M * A Table</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="scoreBadge" class="bg-emerald-950 text-emerald-400 border border-emerald-700/60 font-mono text-sm px-3 py-1.5 rounded-lg">Solved: 0 / 20</span>
+        <button id="prevBtn" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-semibold transition">← Prev</button>
+        <span id="qNumText" class="font-mono text-sm text-slate-300">1 / 20</span>
+        <button id="nextBtn" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-semibold transition">Next →</button>
+      </div>
+    </header>
+
+    <!-- Generator Control Banner -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-800/60 border border-slate-700/70 px-4 py-3 rounded-xl">
+      <div class="text-xs text-slate-300">
+        Need more practice? Generate brand new problems on the fly anytime.
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="generateMoreBtn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5">
+          <span>+</span> Add 5 New Problems
+        </button>
+        <button id="randomNewBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5">
+          <span>🎲</span> Quick Random Problem
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Working Card -->
+    <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+      
+      <!-- Target Polynomial -->
+      <div class="text-center space-y-2">
+        <span id="typeTag" class="inline-block text-xs uppercase tracking-widest font-bold px-2.5 py-1 rounded bg-slate-700 text-slate-300">Polynomial</span>
+        <div id="polyDisplay" class="math-font text-4xl sm:text-5xl font-bold tracking-wide text-white py-2">
+          x² + 7x + 12
+        </div>
+      </div>
+
+      <!-- Green Factored Form Preview Box -->
+      <div class="bg-emerald-950/70 border-2 border-emerald-500/80 rounded-xl p-4 text-center shadow-inner">
+        <div class="text-xs uppercase tracking-wider text-emerald-300 font-bold mb-1">Factored Form</div>
+        <div id="factoredPreview" class="math-font text-2xl sm:text-3xl font-bold text-emerald-200 tracking-wider">
+          (x            )(x            )
+        </div>
+      </div>
+
+      <!-- STEP 1: GCF Section -->
+      <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400">Step 1: Check for GCF</h2>
+          <span id="gcfFeedback" class="text-xs font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-400">Enter GCF or click "No GCF"</span>
+        </div>
+
+        <div id="gcfInputArea" class="flex flex-wrap items-center gap-3">
+          <label class="text-sm text-slate-300 font-medium">GCF =</label>
+          <input type="text" id="gcfInput" placeholder="e.g. 2, 3x, x, 1" class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono text-base w-36 focus:outline-none focus:border-amber-400">
+          <button id="submitGcfBtn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition">Submit GCF</button>
+          <button id="noGcfBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-4 py-2 rounded-lg text-sm transition">No GCF (GCF = 1)</button>
+        </div>
+
+        <!-- Big Inner Polynomial Status Display -->
+        <div class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-center">
+          <div class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Decomposition Status</div>
+          <div id="innerExpressionDisplay" class="math-font text-3xl sm:text-4xl font-extrabold text-amber-300 tracking-wider">
+            ? · ( ????? )
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: M * A Table -->
+      <div id="step2Container" class="relative bg-slate-900 border border-slate-700/80 rounded-xl p-5 space-y-6">
+        
+        <!-- Locked Overlay -->
+        <div id="lockOverlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-xl p-4 text-center">
+          <div class="text-3xl mb-2">🔒</div>
+          <div class="text-base font-bold text-slate-200">STEP 2: M * A Table Locked</div>
+          <div class="text-xs text-slate-400 max-w-sm mt-1">Correctly solve Step 1 (GCF) above to unlock the M * A table and inner expression.</div>
+        </div>
+
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-sky-400">STEP 2: M * A Table</h2>
+          <span id="dotsHintBadge" class="hidden text-xs bg-indigo-950 text-indigo-300 border border-indigo-700 px-2 py-0.5 rounded font-mono">DOTS: Sum = 0</span>
+        </div>
+
+        <!-- M * A Table Visual -->
+        <div class="max-w-md mx-auto border-2 border-slate-700 rounded-xl overflow-hidden shadow-md">
+          <div class="grid grid-cols-2 text-center bg-slate-800 font-bold text-sm tracking-widest border-b border-slate-700">
+            <div class="p-2.5 text-amber-300 border-r border-slate-700">M (Multiply To)</div>
+            <div class="p-2.5 text-sky-300">A (Add To)</div>
+          </div>
+          <div class="grid grid-cols-2 text-center bg-slate-950 math-font text-3xl font-extrabold py-3 border-b border-slate-800">
+            <div id="targetM" class="text-amber-400 border-r border-slate-800">12</div>
+            <div id="targetA" class="text-sky-400">7</div>
+          </div>
+          <div class="p-4 bg-slate-900 text-center space-y-3">
+            <div class="text-xs text-slate-400 font-semibold">Enter the two numbers that multiply to M and add to A:</div>
+            <div class="flex justify-center items-center gap-3">
+              <input type="number" id="factor1" placeholder="Num 1" class="w-24 bg-slate-800 border border-slate-600 rounded-lg p-2 text-center font-mono text-xl text-white focus:outline-none focus:border-sky-400">
+              <span class="text-slate-400 font-bold">&</span>
+              <input type="number" id="factor2" placeholder="Num 2" class="w-24 bg-slate-800 border border-slate-600 rounded-lg p-2 text-center font-mono text-xl text-white focus:outline-none focus:border-sky-400">
+              <button id="checkStep2Btn" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition">Check</button>
+            </div>
+            <div id="step2Feedback" class="text-xs font-mono min-h-[20px] text-slate-400"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Quick Jump Numbers -->
+    <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4">
+      <div class="flex justify-between items-center mb-3">
+        <div class="text-xs text-slate-400 uppercase tracking-wider font-bold">Quick Jump to Problem</div>
+        <div id="totalProblemsCount" class="text-xs text-slate-400 font-mono">20 total</div>
+      </div>
+      <div id="jumpPills" class="flex flex-wrap gap-2"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // Initial 20 problem seed
+    const problems = [
+      { id: 1, poly: "x^2 + 7x + 12", type: "Trinomial", gcf: "1", inner: "x^2 + 7x + 12", m: 12, a: 7, p: 3, q: 4 },
+      { id: 2, poly: "x^2 - 13x + 36", type: "Trinomial", gcf: "1", inner: "x^2 - 13x + 36", m: 36, a: -13, p: -4, q: -9 },
+      { id: 3, poly: "x^2 - 49", type: "Difference of Squares", gcf: "1", inner: "x^2 - 49", m: -49, a: 0, p: 7, q: -7 },
+      { id: 4, poly: "2x^2 + 14x + 24", type: "Trinomial with GCF", gcf: "2", inner: "x^2 + 7x + 12", m: 12, a: 7, p: 3, q: 4 },
+      { id: 5, poly: "3x^2 - 75", type: "Difference of Squares with GCF", gcf: "3", inner: "x^2 - 25", m: -25, a: 0, p: 5, q: -5 },
+      { id: 6, poly: "x^3 + 5x^2 - 36x", type: "Variable GCF + Trinomial", gcf: "x", inner: "x^2 + 5x - 36", m: -36, a: 5, p: 9, q: -4 },
+      { id: 7, poly: "x^2 + 2x - 15", type: "Trinomial", gcf: "1", inner: "x^2 + 2x - 15", m: -15, a: 2, p: 5, q: -3 },
+      { id: 8, poly: "x^2 - 64", type: "Difference of Squares", gcf: "1", inner: "x^2 - 64", m: -64, a: 0, p: 8, q: -8 },
+      { id: 9, poly: "2x^3 - 18x", type: "Variable GCF + DOTS", gcf: "2x", inner: "x^2 - 9", m: -9, a: 0, p: 3, q: -3 },
+      { id: 10, poly: "x^2 - 5x - 14", type: "Trinomial", gcf: "1", inner: "x^2 - 5x - 14", m: -14, a: -5, p: -7, q: 2 },
+      { id: 11, poly: "5x^3 - 20x", type: "Variable GCF + DOTS", gcf: "5x", inner: "x^2 - 4", m: -4, a: 0, p: 2, q: -2 },
+      { id: 12, poly: "x^2 - 11x + 30", type: "Trinomial", gcf: "1", inner: "x^2 - 11x + 30", m: 30, a: -11, p: -5, q: -6 },
+      { id: 13, poly: "3x^3 + 24x^2 + 45x", type: "Variable GCF + Trinomial", gcf: "3x", inner: "x^2 + 8x + 15", m: 15, a: 8, p: 3, q: 5 },
+      { id: 14, poly: "x^2 - 100", type: "Difference of Squares", gcf: "1", inner: "x^2 - 100", m: -100, a: 0, p: 10, q: -10 },
+      { id: 15, poly: "4x^3 + 24x^2 + 32x", type: "Variable GCF + Trinomial", gcf: "4x", inner: "x^2 + 6x + 8", m: 8, a: 6, p: 2, q: 4 },
+      { id: 16, poly: "x^2 + 8x - 48", type: "Trinomial", gcf: "1", inner: "x^2 + 8x - 48", m: -48, a: 8, p: 12, q: -4 },
+      { id: 17, poly: "x^3 - 25x", type: "Variable GCF + DOTS", gcf: "x", inner: "x^2 - 25", m: -25, a: 0, p: 5, q: -5 },
+      { id: 18, poly: "x^2 - 10x + 25", type: "Trinomial", gcf: "1", inner: "x^2 - 10x + 25", m: 25, a: -10, p: -5, q: -5 },
+      { id: 19, poly: "x^2 - 1", type: "Difference of Squares", gcf: "1", inner: "x^2 - 1", m: -1, a: 0, p: 1, q: -1 },
+      { id: 20, poly: "2x^2 - 50", type: "Difference of Squares with GCF", gcf: "2", inner: "x^2 - 25", m: -25, a: 0, p: 5, q: -5 }
+    ];
+
+    let currentIndex = 0;
+    const userState = problems.map(() => ({ gcfSolved: false, factorsSolved: false, f1: "", f2: "" }));
+
+    // Helper functions for polynomial formatting
+    function formatTrinomial(b, c) {
+      let bPart = "";
+      if (b === 1) bPart = " + x";
+      else if (b === -1) bPart = " - x";
+      else if (b > 1) bPart = ` + ${b}x`;
+      else if (b < -1) bPart = ` - ${Math.abs(b)}x`;
+
+      let cPart = "";
+      if (c > 0) cPart = ` + ${c}`;
+      else if (c < 0) cPart = ` - ${Math.abs(c)}`;
+
+      return `x^2${bPart}${cPart}`;
+    }
+
+    function multiplyPoly(gcfStr, b, c) {
+      // Returns polynomial as expanded string
+      const match = gcfStr.match(/^(\d*)(x?)$/);
+      const coeff = match[1] === "" ? 1 : parseInt(match[1], 10);
+      const hasX = match[2] === "x";
+
+      if (!hasX) {
+        // purely numerical GCF
+        const t2 = coeff === 1 ? "x^2" : `${coeff}x^2`;
+        const midVal = coeff * b;
+        let mid = "";
+        if (midVal > 0) mid = ` + ${midVal}x`;
+        else if (midVal < 0) mid = ` - ${Math.abs(midVal)}x`;
+
+        const endVal = coeff * c;
+        let end = "";
+        if (endVal > 0) end = ` + ${endVal}`;
+        else if (endVal < 0) end = ` - ${Math.abs(endVal)}`;
+
+        return `${t2}${mid}${end}`;
+      } else {
+        // variable GCF: (coeff * x) * (x^2 + b*x + c)
+        const t3 = coeff === 1 ? "x^3" : `${coeff}x^3`;
+        const midVal = coeff * b;
+        let mid = "";
+        if (midVal > 0) mid = ` + ${midVal}x^2`;
+        else if (midVal < 0) mid = ` - ${Math.abs(midVal)}x^2`;
+
+        const endVal = coeff * c;
+        let end = "";
+        if (endVal > 0) end = ` + ${endVal}x`;
+        else if (endVal < 0) end = ` - ${Math.abs(endVal)}x`;
+
+        return `${t3}${mid}${end}`;
+      }
+    }
+
+    // Dynamic problem generator
+    function generateNewProblem() {
+      const mode = Math.random();
+      let p, q, b, c, gcfStr, typeName;
+
+      if (mode < 0.35) {
+        // 1. Difference of Squares (35%)
+        const root = Math.floor(Math.random() * 11) + 2; // 2 through 12
+        p = root;
+        q = -root;
+        b = 0;
+        c = -(root * root);
+
+        const hasGcf = Math.random() < 0.5;
+        if (hasGcf) {
+          const gcfChoices = ["2", "3", "5", "x", "2x", "3x"];
+          gcfStr = gcfChoices[Math.floor(Math.random() * gcfChoices.length)];
+          typeName = gcfStr.includes("x") ? "Variable GCF + DOTS" : "Difference of Squares with GCF";
+        } else {
+          gcfStr = "1";
+          typeName = "Difference of Squares";
+        }
+      } else {
+        // 2. Trinomial (65%)
+        const signChoice = Math.random();
+        if (signChoice < 0.4) {
+          // both positive
+          p = Math.floor(Math.random() * 9) + 1;
+          q = Math.floor(Math.random() * 9) + 1;
+        } else if (signChoice < 0.7) {
+          // both negative
+          p = -(Math.floor(Math.random() * 9) + 1);
+          q = -(Math.floor(Math.random() * 9) + 1);
+        } else {
+          // one pos, one neg
+          p = Math.floor(Math.random() * 11) + 1;
+          q = -(Math.floor(Math.random() * 11) + 1);
+        }
+
+        b = p + q;
+        c = p * q;
+
+        const hasGcf = Math.random() < 0.45;
+        if (hasGcf) {
+          const gcfChoices = ["2", "3", "4", "5", "x", "2x", "3x", "4x"];
+          gcfStr = gcfChoices[Math.floor(Math.random() * gcfChoices.length)];
+          typeName = gcfStr.includes("x") ? "Variable GCF + Trinomial" : "Trinomial with GCF";
+        } else {
+          gcfStr = "1";
+          typeName = "Trinomial";
+        }
+      }
+
+      const innerStr = formatTrinomial(b, c);
+      const polyStr = gcfStr === "1" ? innerStr : multiplyPoly(gcfStr, b, c);
+
+      return {
+        id: problems.length + 1,
+        poly: polyStr,
+        type: typeName,
+        gcf: gcfStr,
+        inner: innerStr,
+        m: c,
+        a: b,
+        p: p,
+        q: q
+      };
+    }
+
+    function addProblems(count, jumpToFirstNew = false) {
+      const startIndex = problems.length;
+      for (let i = 0; i < count; i++) {
+        problems.push(generateNewProblem());
+        userState.push({ gcfSolved: false, factorsSolved: false, f1: "", f2: "" });
+      }
+      renderJumpPills();
+      if (jumpToFirstNew) {
+        currentIndex = startIndex;
+        loadProblem();
+      } else {
+        qNumText.textContent = `${currentIndex + 1} / ${problems.length}`;
+      }
+      document.getElementById("totalProblemsCount").textContent = `${problems.length} total`;
+    }
+
+    const polyDisplay = document.getElementById("polyDisplay");
+    const typeTag = document.getElementById("typeTag");
+    const factoredPreview = document.getElementById("factoredPreview");
+    const gcfInput = document.getElementById("gcfInput");
+    const gcfFeedback = document.getElementById("gcfFeedback");
+    const innerExpressionDisplay = document.getElementById("innerExpressionDisplay");
+    const lockOverlay = document.getElementById("lockOverlay");
+    const targetM = document.getElementById("targetM");
+    const targetA = document.getElementById("targetA");
+    const dotsHintBadge = document.getElementById("dotsHintBadge");
+    const factor1 = document.getElementById("factor1");
+    const factor2 = document.getElementById("factor2");
+    const step2Feedback = document.getElementById("step2Feedback");
+    const qNumText = document.getElementById("qNumText");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const jumpPills = document.getElementById("jumpPills");
+
+    function renderJumpPills() {
+      jumpPills.innerHTML = "";
+      problems.forEach((p, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = idx + 1;
+        const st = userState[idx];
+        let bg = "bg-slate-700 text-slate-300";
+        if (st.gcfSolved && st.factorsSolved) bg = "bg-emerald-600 text-white";
+        else if (idx === currentIndex) bg = "border-2 border-amber-400 bg-slate-800 text-amber-300";
+        btn.className = `w-9 h-9 rounded-lg font-mono text-xs font-bold transition ${bg}`;
+        btn.onclick = () => { currentIndex = idx; loadProblem(); };
+        jumpPills.appendChild(btn);
+      });
+      const solvedCount = userState.filter(s => s.gcfSolved && s.factorsSolved).length;
+      scoreBadge.textContent = `Solved: ${solvedCount} / ${problems.length}`;
+    }
+
+    function formatFactorBinomial(val) {
+      if (val === "" || val === undefined || isNaN(val)) return "(x            )";
+      const n = Number(val);
+      return n >= 0 ? `(x + ${n})` : `(x - ${Math.abs(n)})`;
+    }
+
+    function updateFactoredPreviewBox() {
+      const q = problems[currentIndex];
+      const st = userState[currentIndex];
+      const hasGcf = q.gcf !== "1";
+
+      let gcfPrefix = "";
+      if (hasGcf) {
+        gcfPrefix = st.gcfSolved ? `${q.gcf} * ` : "GCF * ";
+      }
+
+      const f1Text = formatFactorBinomial(st.f1);
+      const f2Text = formatFactorBinomial(st.f2);
+      factoredPreview.textContent = `${gcfPrefix}${f1Text}${f2Text}`;
+    }
+
+    function loadProblem() {
+      const q = problems[currentIndex];
+      const st = userState[currentIndex];
+
+      polyDisplay.innerHTML = q.poly.replace(/\^3/g, "³").replace(/\^2/g, "²");
+      typeTag.textContent = q.type;
+      qNumText.textContent = `${currentIndex + 1} / ${problems.length}`;
+
+      targetM.textContent = q.m;
+      targetA.textContent = q.a;
+      dotsHintBadge.classList.toggle("hidden", q.a !== 0);
+
+      factor1.value = st.f1;
+      factor2.value = st.f2;
+      gcfInput.value = "";
+      step2Feedback.textContent = "";
+
+      if (st.gcfSolved) {
+        gcfFeedback.textContent = `✓ GCF verified: ${q.gcf}`;
+        gcfFeedback.className = "text-xs font-semibold px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800";
+        const cleanInner = q.inner.replace(/\^2/g, "²");
+        innerExpressionDisplay.textContent = q.gcf === "1" ? cleanInner : `${q.gcf} · ( ${cleanInner} )`;
+        lockOverlay.classList.add("hidden");
+      } else {
+        gcfFeedback.textContent = "Enter GCF or click 'No GCF'";
+        gcfFeedback.className = "text-xs font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-400";
+        innerExpressionDisplay.textContent = "? · ( ????? )";
+        lockOverlay.classList.remove("hidden");
+      }
+
+      if (st.factorsSolved) {
+        step2Feedback.textContent = "✓ Factoring complete!";
+        step2Feedback.className = "text-xs font-mono text-emerald-400";
+      }
+
+      updateFactoredPreviewBox();
+      renderJumpPills();
+    }
+
+    function verifyGcf(entered) {
+      const q = problems[currentIndex];
+      const st = userState[currentIndex];
+      const clean = entered.trim().toLowerCase().replace(/\s+/g, "");
+      const expected = q.gcf.toLowerCase();
+
+      if (clean === expected) {
+        st.gcfSolved = true;
+        loadProblem();
+      } else {
+        gcfFeedback.textContent = `✗ Not quite. Check coefficients and variable powers.`;
+        gcfFeedback.className = "text-xs font-semibold px-2.5 py-1 rounded bg-rose-950 text-rose-400 border border-rose-800";
+      }
+    }
+
+    document.getElementById("submitGcfBtn").onclick = () => verifyGcf(gcfInput.value);
+    document.getElementById("noGcfBtn").onclick = () => verifyGcf("1");
+    gcfInput.addEventListener("keydown", (e) => { if (e.key === "Enter") verifyGcf(gcfInput.value); });
+
+    function checkFactors() {
+      const q = problems[currentIndex];
+      const st = userState[currentIndex];
+      const v1 = parseInt(factor1.value, 10);
+      const v2 = parseInt(factor2.value, 10);
+
+      if (isNaN(v1) || isNaN(v2)) {
+        step2Feedback.textContent = "Please enter two valid numbers.";
+        step2Feedback.className = "text-xs font-mono text-amber-400";
+        return;
+      }
+
+      st.f1 = v1;
+      st.f2 = v2;
+      updateFactoredPreviewBox();
+
+      const prod = v1 * v2;
+      const sum = v1 + v2;
+
+      if (prod === q.m && sum === q.a) {
+        st.factorsSolved = true;
+        step2Feedback.textContent = `✓ Correct! Product is ${prod} and sum is ${sum}.`;
+        step2Feedback.className = "text-xs font-mono text-emerald-400";
+        renderJumpPills();
+      } else {
+        step2Feedback.textContent = `✗ Product = ${prod} (need ${q.m}), Sum = ${sum} (need ${q.a}).`;
+        step2Feedback.className = "text-xs font-mono text-rose-400";
+      }
+    }
+
+    document.getElementById("checkStep2Btn").onclick = checkFactors;
+    [factor1, factor2].forEach(input => {
+      input.addEventListener("input", () => {
+        const st = userState[currentIndex];
+        st.f1 = factor1.value;
+        st.f2 = factor2.value;
+        updateFactoredPreviewBox();
+      });
+      input.addEventListener("keydown", (e) => { if (e.key === "Enter") checkFactors(); });
+    });
+
+    document.getElementById("prevBtn").onclick = () => {
+      if (currentIndex > 0) { currentIndex--; loadProblem(); }
+    };
+    document.getElementById("nextBtn").onclick = () => {
+      if (currentIndex < problems.length - 1) { currentIndex++; loadProblem(); }
+    };
+
+    // Problem Generator Button Listeners
+    document.getElementById("generateMoreBtn").onclick = () => {
+      addProblems(5, false);
+    };
+
+    document.getElementById("randomNewBtn").onclick = () => {
+      addProblems(1, true);
+    };
+
+    loadProblem();
+  </script>
+</body>
+</html>
